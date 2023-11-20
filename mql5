@@ -1,0 +1,74 @@
+
+//+------------------------------------------------------------------+
+//|                                                     Empire MT4.mq5 |
+//|                                  Forex Robot Easy Team - forexroboteasy.com |
+//|                                https://www.forexroboteasy.com/empire-mt4/ |
+//|                                                         Version 1.0 |
+//|                                         Developed by Forex Robot Easy Team |
+//+------------------------------------------------------------------+
+
+//--- External parameters
+extern int TakeProfit = 100; // Take profit level in pips
+extern int StopLoss = 50; // Stop loss level in pips
+extern double LotSize = 0.01; // Lot size for each trade
+extern int MaxSpread = 2; // Maximum allowed spread
+
+//--- Global variables
+int ticket = 0; // Trade ticket number
+
+//+------------------------------------------------------------------+
+//| Expert initialization function                                   |
+//+------------------------------------------------------------------+
+int OnInit()
+{
+   //--- Initialize necessary variables and settings
+   Print('Empire MT4 Expert Advisor initialized successfully.');
+   
+   return(INIT_SUCCEEDED);
+}
+
+//+------------------------------------------------------------------+
+//| Expert deinitialization function                                 |
+//+------------------------------------------------------------------+
+void OnDeinit(const int reason)
+{
+   //--- Perform necessary actions upon deinitialization
+   Print('Empire MT4 Expert Advisor deinitialized successfully.');
+}
+
+//+------------------------------------------------------------------+
+//| Expert tick function                                             |
+//+------------------------------------------------------------------+
+void OnTick()
+{
+   //--- Check if there is an open position
+   if (PositionSelect() == false)
+   {
+      //--- Check if spread is within acceptable range
+      if (SymbolInfoInteger(_Symbol, SYMBOL_SPREAD) <= MaxSpread)
+      {
+         //--- Check if recurring pattern is identified
+         if (IdentifyPattern() == true)
+         {
+            //--- Open a new position
+            ticket = OrderSend(_Symbol, OP_BUY, LotSize, Ask, 0, Bid - StopLoss * _Point, Bid + TakeProfit * _Point, 'Empire MT4', 0, 0, CLR_NONE);
+            
+            if (ticket > 0)
+               Print('New buy order opened successfully with ticket number ', ticket);
+            else
+               Print('Failed to open buy order. Error code: ', GetLastError());
+         }
+      }
+   }
+}
+
+//+------------------------------------------------------------------+
+//| Function to identify recurring patterns                           |
+//+------------------------------------------------------------------+
+bool IdentifyPattern()
+{
+   //--- Perform analysis on historical data to identify patterns
+   //--- Logic for pattern identification goes here
+   
+   return(true); // Return true if a pattern is identified, otherwise false
+}
